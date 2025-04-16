@@ -9,6 +9,8 @@ namespace lab3
 {
     public static class MatrixMultiplierThread
     {
+        // synchronizacja dostepu do danych
+        // obiekt blokujacy uzywany do zabezpieczenia dostepu do wspoldzielonej macierzy wynikowej
         private static readonly object locker = new object();
 
         public static Matrix MultiplyWithThreads(Matrix A, Matrix B, int threadCount)
@@ -17,12 +19,14 @@ namespace lab3
                 throw new ArgumentException("Invalid matrix dimensions");
 
             int size = A.Rows;
-            var result = new Matrix(size, size);
-            Thread[] threads = new Thread[threadCount];
+            var result = new Matrix(size, size); // tworzymy macierz wynikowa result
+            Thread[] threads = new Thread[threadCount]; // tablica do ktorej bedziemy wrzuac wszystkie watki
 
+            // podzial wierszy miedzy watki
             int rowsPerThread = size / threadCount;
             int remainingRows = size % threadCount;
 
+            // wyznaczamy zakres wierszy dla kazdego watku
             int currentRow = 0;
             for (int t = 0; t < threadCount; t++)
             {
@@ -30,6 +34,7 @@ namespace lab3
                 int endRow = startRow + rowsPerThread + (t < remainingRows ? 1 : 0);
                 currentRow = endRow;
 
+                // tworzymy watki
                 threads[t] = new Thread(() =>
                 {
                     for (int i = startRow; i < endRow; i++)
@@ -40,7 +45,7 @@ namespace lab3
                             for (int k = 0; k < size; k++)
                                 sum += A[i, k] * B[k, j];
 
-                            // Synchronizacja dostępu do współdzielonej macierzy wynikowej
+                            // synchronizacja dostepu do macierzy wynikowej
                             lock (locker)
                             {
                                 result[i, j] = sum;
@@ -51,9 +56,9 @@ namespace lab3
             }
 
             foreach (var thread in threads)
-                thread.Start();
+                thread.Start(); // uruchamiamy watki
             foreach (var thread in threads)
-                thread.Join();
+                thread.Join(); // czekamy na zakonczenie wszystkich watkow
 
             return result;
         }

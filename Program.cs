@@ -9,21 +9,23 @@ namespace lab3
     {
         static void Main(string[] args)
         {
-            int size = 1000;
-            int[] threadCounts = { 1, 2, 4, 8 };
+            int size = 1000; // testy wykonano dla 250, 500, 750, 1000
+            int[] threadCounts = { 1, 2, 4, 8 }; // liczba watkow, ograniczona przez zasoby procesora
 
+            // tworzenie losowych macierzy o rozmiarze size
             var A = Matrix.GenerateRandom(size);
             var B = Matrix.GenerateRandom(size);
 
             Console.WriteLine("Testing on matrix size: " + size);
 
-            // Sekwencyjnie
-            var swSeq = Stopwatch.StartNew();
-            var resultSeq = MatrixMultiplier.MultiplySequential(A, B);
-            swSeq.Stop();
+            // sequential
+            var swSeq = Stopwatch.StartNew(); // uruchomienie stopera
+            var resultSeq = MatrixMultiplier.MultiplySequential(A, B); // wywolanie metody mnozenia macierzy
+            swSeq.Stop(); // zatrzymanie stopera
             Console.WriteLine($"Sequential: {swSeq.ElapsedMilliseconds} ms");
 
-            foreach (var threads in threadCounts)
+            // parallel
+            foreach (var threads in threadCounts) // iteracja po liczbie watkow
             {
                 var swPar = Stopwatch.StartNew();
                 var resultPar = MatrixMultiplier.MultiplyParallel(A, B, threads);
@@ -31,6 +33,7 @@ namespace lab3
                 Console.WriteLine($"{threads} threads (Parallel): {swPar.ElapsedMilliseconds} ms");
             }
 
+            // thread
             foreach (var threads in threadCounts)
             {
                 var swThread = Stopwatch.StartNew();

@@ -8,16 +8,19 @@ namespace lab3
 {
     public class Matrix
     {
+        // macierz Data przechowująca dane (tablica 2D)
         public int[,] Data { get; }
 
         public int Rows => Data.GetLength(0);
         public int Cols => Data.GetLength(1);
 
+        // konstruktor
         public Matrix(int rows, int cols)
         {
             Data = new int[rows, cols];
         }
 
+        // generowanie losowych macierzy o rozmiarze size
         public static Matrix GenerateRandom(int size)
         {
             var rand = new Random();
@@ -28,6 +31,7 @@ namespace lab3
             return matrix;
         }
 
+        // indeksator do dostepu do elementow macierzy
         public int this[int row, int col]
         {
             get => Data[row, col];
